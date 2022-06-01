@@ -1,4 +1,5 @@
 # autowallp
+Different wallpapers on each workspace/Virtual Desktop on Gnome
 
 
 

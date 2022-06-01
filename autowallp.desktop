@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=AutoWallp
+Icon=whatever
+Type=Application
+Exec=/usr/local/bin/autowallp
+Terminal=false
+X-GNOME-Autostart-enabled=true

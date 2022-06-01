@@ -17,7 +17,7 @@ installllllllllll
 
 
 ```
-   git clone https://github.com/RexAckermann/autowallp/edit/main/README.md
+   git clone https://github.com/RexAckermann/autowallp/
    cd autowallp
    sudo chmod +x install.sh
    ./install.sh

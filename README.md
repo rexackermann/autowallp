@@ -28,3 +28,7 @@ installllllllllll
    sudo chmod +x install.sh
    ./install.sh
 ```
+# Changing Wallpapers
+
+Just drop your wallpapers in the ~/.config/autowallp folder
+And rename it accordingly

@@ -7,6 +7,8 @@ It allows u 2 use different wallpapers on each workspace/Virtual Desktop on Gnom
 
 
 
+# Requarements : Gnome Desktop : gsettings (You should have it installed if gnome itself is installed)
+
 Used it on Gnome 42
 
 

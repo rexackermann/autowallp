@@ -29,8 +29,8 @@ sudo chmod +x install.sh
 ./install.sh
 cd ..
 rm -rfv autowallp
-nohup autowallp;
-exit
+nohup autowallp &
+disown
 ```
 # Changing Wallpapers
 

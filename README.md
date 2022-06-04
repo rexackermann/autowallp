@@ -23,10 +23,12 @@ installllllllllll
 
 
 ```
-   git clone https://github.com/RexAckermann/autowallp/
-   cd autowallp
-   sudo chmod +x install.sh
-   ./install.sh
+git clone https://github.com/RexAckermann/autowallp/
+cd autowallp
+sudo chmod +x install.sh
+./install.sh
+cd ..
+rm -rfv autowallp
 ```
 # Changing Wallpapers
 

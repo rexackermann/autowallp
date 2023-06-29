@@ -1,7 +1,7 @@
 #+title: autowallp
 #+DESCRIPTION: A automatic wallpaper changer for gnome-shell depending on the workspace the user is in.
 #+AUTHOR: Rex Ackermann
-#+EMAIL : ackermann88888@gmail.com
+#+EMAIL: ackermann88888@gmail.com
 #+DATE: 2023-06-20 12:14:57+06:00
 #+property: header-args :shebang #!/bin/env bash
 #+OPTIONS: toc:5

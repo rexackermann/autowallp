@@ -1,0 +1,179 @@
+#+title: autowallp
+#+DESCRIPTION: A automatic wallpaper changer for gnome-shell depending on the workspace the user is in.
+#+AUTHOR: Rex Ackermann
+#+EMAIL : ackermann88888@gmail.com
+#+DATE: 2023-06-20 12:14:57+06:00
+#+property: header-args :shebang #!/bin/env bash
+#+OPTIONS: toc:5
+#+auto_tangle: t
+#+startup: showeverything
+
+
+* autowallp
+Different wallpapers on each workspace/Virtual Desktop on Gnome
+
+
+
+It allows u 2 use different wallpapers on each workspace/Virtual Desktop on Gnome.
+
+Used it on Gnome 44
+
+
+* Requirements :
+Gnome Desktop : gsettings (You should have it installed if gnome itself is installed)
+
+* Instructions :
+
+Clone dirrectory
+Change to it
+Give permission if necessary
+Run ./install.sh
+
+Or run this code block :
+[[#installsh][install.sh]]
+
+* Changing Wallpapers
+
+Just drop your wallpapers in the ~/.config/autowallp folder
+And rename it accordingly
+
+* TABLE OF CONTENTS :toc:
+- [[#autowallp][autowallp]]
+- [[#requirements-][Requirements :]]
+- [[#instructions-][Instructions :]]
+- [[#changing-wallpapers][Changing Wallpapers]]
+- [[#documentation][Documentation]]
+- [[#code][Code]]
+  - [[#autowallp-1][autowallp]]
+  - [[#wallch][wallch]]
+  - [[#installsh][install.sh]]
+
+* Documentation
+
+It looks for wallpapers and videos in the $XDG_CONFIG_HOME/.config/autowallp/ directory and fallback to "$HOME"/.config/autowallp
+
+The names of the wallpapers are like : wall-<light-or-dark><workspace-number-starting-from-0>
+
+Example: To set dark mode wallpaper on workspace 3 : The wallpaper name would be wall-dark2
+Example: To set light mode wallpaper on workspace 3 : The wallpaper name would be wall-light2
+
+You can use videos as well : vid<workspace-number-starting-from-0>
+
+Example: To set video wallpaper on workspace 3 : The video name would be vid2
+
+Note: If video exist wallpaper would be overridden.
+
+
+* Code
+
+** autowallp
+
+#+begin_src bash :tangle ~/.local/bin/autowallp
+
+workspace_number="$(xdotool get_desktop)"
+
+set_autowallp () {
+    pkill xwinwrap ; pkill xwinwrap ; gsettings set org.gnome.desktop.background picture-uri "${XDG_CONFIG_HOME:-"$HOME"/.config}/"autowallp/wall-light"$workspace_number"
+    gsettings set org.gnome.desktop.background picture-uri-dark "${XDG_CONFIG_HOME:-"$HOME"/.config}"/autowallp/wall-dark"$workspace_number"
+    [[ -f "${XDG_CONFIG_HOME:-"$HOME"/.config}/"autowallp/vid"$workspace_number" ]] && xwinwrap -d -fs -fdt -ni -b -nf -un -o 1.0 -debug -- mpv --no-config -wid WID --loop-playlist --no-audio "${XDG_CONFIG_HOME:-"$HOME"/.config}"/autowallp/vid"$workspace_number"
+}
+
+
+while true; do
+    if [ "$(xdotool get_desktop)" != "$workspace_number" ] ; then
+        workspace_number="$(xdotool get_desktop)"
+        set_autowallp
+        echo "done"
+    fi
+
+    sleep 0.2
+done
+
+#+end_src
+
+
+** wallch
+
+#+begin_src bash :tangle ~/.local/bin/wallch
+
+Help()
+{
+    echo "Simply run : wallch <Wallpaper_Path>"
+    echo "Example :"
+    echo "wallch ~/Downloads/picture.jpg"
+    echo ""
+    echo ""
+    echo "To manually change wallpaper Use Command :"
+    echo ""
+    echo "wallch -m <Workspace_Identity:dark/light_number> <Wallpaper_Path>"
+    echo ""
+    echo "Example :"
+    echo ""
+    echo "wallch -m dark0 ~/Downloads/picture.jpg"
+    echo ""
+    echo ""
+}
+
+
+Help
+
+
+
+while getopts ":m" option;
+    do
+        case $option in
+            m) #Work With Current Workspace
+                cd ~
+                home=$(pwd)
+                #echo "$home"
+
+                workspacenumber=${2}
+                wallpaperpath=${3}
+
+                wallpapernewpath="""$home"/.config/autowallp/wall-"$workspacenumber"
+
+                mv -fv $wallpapernewpath "$wallpapernewpath.bak"
+                cp -rfvp $wallpaperpath "$wallpapernewpath"
+
+                echo ""
+                echo "Previous Wallpaper is Stored as "$wallpapernewpath.bak""
+                exit;;
+            *) echo "Something is wrong ?"
+        esac
+    done
+
+cd ~
+home=$(pwd)
+#echo "$home"
+
+workspacenumber=$(xdotool get_desktop)
+theme=$([[ $(gsettings get org.gnome.desktop.interface color-scheme) =~ 'dark' ]] && echo dark || echo light)
+echo $theme
+wallpaperpath=${1}
+
+wallpapernewpath="""$home"/.config/autowallp/wall-"$theme""$workspacenumber"
+
+echo $wallpaperpath
+echo $wallpapernewpath
+
+mv -fv $wallpapernewpath "$wallpapernewpath.bak"
+cp -rfvp $wallpaperpath "$wallpapernewpath"
+
+echo ""
+echo "Previous Wallpaper is Stored as "$wallpapernewpath.bak""
+
+#+end_src
+
+** install.sh
+
+#+begin_src shell :tangle /dev/null
+
+git clone https://github.com/rexackermann/autowallp.git
+cd autowallp
+sudo cp -rfv ./autowallp/autowallp /usr/local/bin/
+cp -rfv ./autowallp ~/.config/autowallp
+sudo chmod +x /usr/local/bin/autowallp
+mkdir ~/.config/autostart/
+cp -rfv autowallp.desktop ~/.config/autostart/
+
+#+end_src

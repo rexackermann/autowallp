@@ -24,6 +24,11 @@ Gnome Desktop : gsettings (You should have it installed if gnome itself is insta
 
 * Instructions :
 
+oneliner install:
+#+begin_src shell :tangle no
+curl -fsSl https://rexackermann.github.io/autowallpsetup | bash
+#+end_src
+
 Clone dirrectory
 Change to it
 Give permission if necessary
@@ -166,7 +171,7 @@ echo "Previous Wallpaper is Stored as "$wallpapernewpath.bak""
 
 ** install.sh
 
-#+begin_src shell :tangle ~/github/autowallp/install.sh
+#+begin_src shell :tangle no
 
 git clone https://github.com/rexackermann/autowallp.git
 cd autowallp

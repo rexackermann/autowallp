@@ -9,7 +9,6 @@
 #+startup: showeverything
 
 
-* autowallp
 Different wallpapers on each workspace/Virtual Desktop on Gnome
 
 
@@ -20,6 +19,7 @@ Used it on Gnome 44
 
 
 * Requirements :
+
 Gnome Desktop : gsettings (You should have it installed if gnome itself is installed)
 
 * Instructions :
@@ -43,13 +43,12 @@ Just drop your wallpapers in the ~/.config/autowallp folder
 And rename it accordingly
 
 * TABLE OF CONTENTS :toc:
-- [[#autowallp][autowallp]]
 - [[#requirements-][Requirements :]]
 - [[#instructions-][Instructions :]]
 - [[#changing-wallpapers][Changing Wallpapers]]
 - [[#documentation][Documentation]]
 - [[#code][Code]]
-  - [[#autowallp-1][autowallp]]
+  - [[#autowallp][autowallp]]
   - [[#wallch][wallch]]
   - [[#installsh][install.sh]]
 

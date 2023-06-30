@@ -18,49 +18,50 @@ Help()
 }
 
 
-Help
+# Help
 
 
 
-while getopts ":m" option;
+while getopts ":mh" option;
     do
         case $option in
+            h) show help
+               help
+               exit;;
             m) #Work With Current Workspace
-                cd ~
-                home=$(pwd)
-                #echo "$home"
+                cd ~ || exit
+                #echo "$HOME"
 
                 workspacenumber=${2}
                 wallpaperpath=${3}
 
-                wallpapernewpath="""$home"/.config/autowallp/wall-"$workspacenumber"
+                wallpapernewpath="$HOME"/.config/autowallp/wall-"$workspacenumber"
 
-                mv -fv $wallpapernewpath "$wallpapernewpath.bak"
-                cp -rfvp $wallpaperpath "$wallpapernewpath"
+                mv -fv "$wallpapernewpath" "$wallpapernewpath.bak"
+                cp -rfvp "$wallpaperpath" "$wallpapernewpath"
 
                 echo ""
-                echo "Previous Wallpaper is Stored as "$wallpapernewpath.bak""
+                echo -e "Previous Wallpaper is Stored as $wallpapernewpath.bak"
                 exit;;
             *) echo "Something is wrong ?"
         esac
     done
 
-cd ~
-home=$(pwd)
-#echo "$home"
+cd ~ || exit
+#echo "$HOME"
 
 workspacenumber=$(xdotool get_desktop)
 theme=$([[ $(gsettings get org.gnome.desktop.interface color-scheme) =~ 'dark' ]] && echo dark || echo light)
-echo $theme
+echo "$theme"
 wallpaperpath=${1}
 
-wallpapernewpath="""$home"/.config/autowallp/wall-"$theme""$workspacenumber"
+wallpapernewpath="""$HOME"/.config/autowallp/wall-"$theme""$workspacenumber"
 
-echo $wallpaperpath
-echo $wallpapernewpath
+echo "$wallpaperpath"
+echo "$wallpapernewpath"
 
-mv -fv $wallpapernewpath "$wallpapernewpath.bak"
-cp -rfvp $wallpaperpath "$wallpapernewpath"
+mv -fv "$wallpapernewpath" "$wallpapernewpath.bak"
+cp -rfvp "$wallpaperpath" "$wallpapernewpath"
 
 echo ""
-echo "Previous Wallpaper is Stored as "$wallpapernewpath.bak""
+echo -e "Previous Wallpaper is Stored as $wallpapernewpath.bak"

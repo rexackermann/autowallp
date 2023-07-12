@@ -1,4 +1,71 @@
-#!/bin/env bash
+#!/usr/bin/env bash
+Help()
+{
+    echo "Simply run : wallch <Wallpaper_Path>"
+    echo "Example :"
+    echo "wallch ~/Downloads/picture.jpg"
+    echo ""
+    echo ""
+    echo "To manually change wallpaper Use Command :"
+    echo ""
+    echo "wallch -m <Workspace_Identity:dark/light_number> <Wallpaper_Path>"
+    echo ""
+    echo "Example :"
+    echo ""
+    echo "wallch -m dark0 ~/Downloads/picture.jpg"
+    echo ""
+    echo ""
+}
+
+
+# Help
+
+
+
+while getopts ":mh" option;
+    do
+        case $option in
+            h) show help
+               help
+               exit;;
+            m) #Work With Current Workspace
+                cd ~ || exit
+                #echo "$HOME"
+
+                workspacenumber=${2}
+                wallpaperpath=${3}
+
+                wallpapernewpath="$HOME"/.config/autowallp/wall-"$workspacenumber"
+
+                mv -fv "$wallpapernewpath" "$wallpapernewpath.bak"
+                cp -rfvp "$wallpaperpath" "$wallpapernewpath"
+
+                echo ""
+                echo -e "Previous Wallpaper is Stored as $wallpapernewpath.bak"
+                exit;;
+            *) echo "Something is wrong ?"
+        esac
+    done
+
+cd ~ || exit
+#echo "$HOME"
+
+workspacenumber=$(xdotool get_desktop)
+theme=$([[ $(gsettings get org.gnome.desktop.interface color-scheme) =~ 'dark' ]] && echo dark || echo light)
+echo "$theme"
+wallpaperpath=${1}
+
+wallpapernewpath="""$HOME"/.config/autowallp/wall-"$theme""$workspacenumber"
+
+echo "$wallpaperpath"
+echo "$wallpapernewpath"
+
+mv -fv "$wallpapernewpath" "$wallpapernewpath.bak"
+cp -rfvp "$wallpaperpath" "$wallpapernewpath"
+
+echo ""
+echo -e "Previous Wallpaper is Stored as $wallpapernewpath.bak"
+
 Help()
 {
     echo "Simply run : wallch <Wallpaper_Path>"

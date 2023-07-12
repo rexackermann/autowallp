@@ -3,7 +3,7 @@
 #+AUTHOR: Rex Ackermann
 #+email: ackermann88888@gmail.com
 #+DATE: 2023-06-20 12:14:57+06:00
-#+property: header-args :shebang #!/bin/env bash
+#+property: header-args :shebang #!/usr/bin/env bash
 #+OPTIONS: toc:5
 #+auto_tangle: t
 #+startup: showeverything

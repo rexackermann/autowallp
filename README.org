@@ -77,15 +77,16 @@ Note: If video exist wallpaper would be overridden.
 workspace_number="$(xdotool get_desktop)"
 
 set_autowallp () {
+    workspace_number="$(xdotool get_desktop)"
     pkill xwinwrap ; pkill xwinwrap ; gsettings set org.gnome.desktop.background picture-uri "${XDG_CONFIG_HOME:-"$HOME"/.config}/"autowallp/wall-light"$workspace_number"
     gsettings set org.gnome.desktop.background picture-uri-dark "${XDG_CONFIG_HOME:-"$HOME"/.config}"/autowallp/wall-dark"$workspace_number"
     [[ -f "${XDG_CONFIG_HOME:-"$HOME"/.config}/"autowallp/vid"$workspace_number" ]] && xwinwrap -d -fs -fdt -ni -b -nf -un -o 1.0 -debug -- mpv --no-config -wid WID --loop-playlist --no-audio "${XDG_CONFIG_HOME:-"$HOME"/.config}"/autowallp/vid"$workspace_number"
 }
 
+set_autowallp
 
 while true; do
     if [ "$(xdotool get_desktop)" != "$workspace_number" ] ; then
-        workspace_number="$(xdotool get_desktop)"
         set_autowallp
         echo "done"
     fi

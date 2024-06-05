@@ -9,20 +9,18 @@
 #+startup: showeverything
 
 
-Different wallpapers on each workspace/Virtual Desktop on Gnome and KDE
+Different wallpapers on each workspace/Virtual Desktop on Gnome
 A automatic wallpaper changer for gnome-shell depending on the workspace the user is in.
 
 
 It allows u 2 use different wallpapers on each workspace/Virtual Desktop on Gnome.
 
-Used it on Gnome 44,45,46 and
-KDE Plasma 6
+Used it on Gnome 44
 
 
 * Requirements :
 
 Gnome Desktop : gsettings (You should have it installed if gnome itself is installed)
-KDE Desktop : You should be good to go.
 
 * Instructions :
 

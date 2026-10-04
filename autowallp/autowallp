@@ -1,22 +1,100 @@
-#!/usr/bin/env bash
-workspace_number="$(xdotool get_desktop)"
+#!/bin/env bash
 
-set_autowallp () {
-    workspace_number="$(xdotool get_desktop)"
-    wallpaper="${XDG_CONFIG_HOME:-"$HOME"/.config}"/autowallp/wall-dark"$workspace_number"
-    pkill xwinwrap ; pkill xwinwrap ; gsettings set org.gnome.desktop.background picture-uri "${XDG_CONFIG_HOME:-"$HOME"/.config}/"autowallp/wall-light"$workspace_number"
-    gsettings set org.gnome.desktop.background picture-uri-dark "$wallpaper"
-    plasma-apply-wallpaperimage "$wallpaper"
-    [[ -f "${XDG_CONFIG_HOME:-"$HOME"/.config}/"autowallp/vid"$workspace_number" ]] && xwinwrap -d -fs -fdt -ni -b -nf -un -o 1.0 -debug -- mpv --no-config -wid WID --loop-playlist --no-audio "${XDG_CONFIG_HOME:-"$HOME"/.config}"/autowallp/vid"$workspace_number"
+# Detect Desktop Environment (gnome or kde)
+if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]] || [[ "$DESKTOP_SESSION" == *"kde"* ]]; then
+  DE="kde"
+else
+  DE="gnome"
+fi
+
+# Helper commands abstraction based on environment
+get_desktop() {
+  if [ "$DE" == "kde" ]; then
+    local ws
+    ws="$(kdotool get_desktop 2>/dev/null)"
+    # Convert 1-indexed kdotool response to 0-indexed
+    if [[ -n "$ws" && "$ws" =~ ^[0-9]+$ ]]; then
+      echo $((ws - 1))
+    else
+      echo 0
+    fi
+  else
+    xdotool get_desktop 2>/dev/null || echo 0
+  fi
 }
+
+get_orientation() {
+  xrandr --query --verbose | grep -E "connected|eDP" | grep "eDP" -A 1 | grep -oE "(normal|inverted|left|right)" | head -n 1
+}
+
+is_dark_mode() {
+  if [ "$DE" == "kde" ]; then
+    # Check KDE color scheme setting for 'Dark'
+    kreadconfig6 --group "General" --key "ColorScheme" 2>/dev/null | grep -iq "dark"
+  else
+    # Check GNOME color scheme setting
+    gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | grep -q "prefer-dark"
+  fi
+}
+
+set_autowallp () {  
+  local config_dir="${XDG_CONFIG_HOME:-"$HOME"/.config}/autowallp"  
+  
+  if [[ "$orientation" == "normal" || "$orientation" == "inverted" ]]; then
+    light_wall="$config_dir/wall-light$workspace_number"
+    dark_wall="$config_dir/wall-dark$workspace_number"
+  else
+    light_wall="$config_dir/wallp-light$workspace_number"
+    dark_wall="$config_dir/wallp-dark$workspace_number"
+  fi
+
+  # Fallback to index 0 if file for workspace doesn't exist
+  [[ ! -f "$light_wall" ]] && light_wall="$config_dir/wall-light0"
+  [[ ! -f "$dark_wall" ]] && dark_wall="$config_dir/wall-dark0"
+
+  if [ "$DE" == "kde" ]; then
+    # Select appropriate wall based on dark mode preference
+    local target_wall="$light_wall"
+    is_dark_mode && target_wall="$dark_wall"
+
+    if command -v plasma-apply-wallpaperimage &> /dev/null; then
+      plasma-apply-wallpaperimage "$target_wall"
+    else
+      qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "desktops().forEach(d => { d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General'); d.writeConfig('Image', 'file://$target_wall'); d.reloadConfig(); });"
+    fi
+
+  else
+    # GNOME implementation
+    pkill xwinwrap 2>/dev/null
+    gsettings set org.gnome.desktop.background picture-uri "file://$light_wall"
+    gsettings set org.gnome.desktop.background picture-uri-dark "file://$dark_wall"
+    
+    if [[ -f "$config_dir/vid$workspace_number" ]]; then
+      xwinwrap -d -fs -fdt -ni -b -nf -un -o 1.0 -debug -- mpv --no-config -wid WID --loop-playlist --no-audio "$config_dir/vid$workspace_number" &
+    fi
+  fi
+}
+
+workspace_number="$(get_desktop)"
+orientation="$(get_orientation)"
+
+while [ "$workspace_number" == "-1" ]; do
+  workspace_number="$(get_desktop)"
+  sleep 0.2
+done
 
 set_autowallp
 
 while true; do
-    if [ "$(xdotool get_desktop)" != "$workspace_number" ] ; then
-        set_autowallp
-        echo "done"
-    fi
+  current_ws="$(get_desktop)"
+  current_ori="$(get_orientation)"
 
-    sleep 0.2
+  if [ "$current_ws" != "$workspace_number" ] || [ "$current_ori" != "$orientation" ]; then
+    workspace_number="$current_ws"
+    orientation="$current_ori"
+    set_autowallp
+  fi
+
+  sleep 0.2
 done
